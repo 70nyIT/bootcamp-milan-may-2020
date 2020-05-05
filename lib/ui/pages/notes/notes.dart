@@ -16,11 +16,6 @@ class NotesPage extends StatelessWidget {
           index: index,
         ),
       ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: () {
-          print('FAB');
-        },
-      ),
     );
   }
 }
