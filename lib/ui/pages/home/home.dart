@@ -1,10 +1,7 @@
 import 'package:diarybootcamp/ui/styles.dart';
-import 'package:diarybootcamp/ui/pages/map/map.dart';
-import 'package:diarybootcamp/ui/pages/notes/notes.dart';
 import 'package:diarybootcamp/ui/widgets/my_bottom_nav_bar.dart';
 import 'package:diarybootcamp/ui/widgets/my_card.dart';
 import 'package:flutter/material.dart';
-import 'package:intl/intl.dart';
 
 class HomePage extends StatelessWidget {
   @override
