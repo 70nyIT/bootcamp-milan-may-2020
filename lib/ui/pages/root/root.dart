@@ -14,13 +14,11 @@ class RootPage extends StatefulWidget {
 class _RootPageState extends State<RootPage> {
   DateFormat dateFormat;
   int _index;
-  IconData leadingIcon;
   @override
   void initState() {
     super.initState();
     dateFormat = DateFormat('dd MMM');
     _index = 0;
-    leadingIcon = Icons.map;
   }
 
   @override
