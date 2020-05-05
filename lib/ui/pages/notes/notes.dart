@@ -5,9 +5,6 @@ class NotesPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: Text('Note'),
-      ),
       body: ListView.builder(
         scrollDirection: Axis.vertical,
         itemCount: 60,

@@ -7,40 +7,9 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 
 class HomePage extends StatelessWidget {
-  final DateFormat dateFormat = DateFormat('dd MMM');
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: Row(
-          mainAxisSize: MainAxisSize.min,
-          children: <Widget>[
-            Icon(Icons.event),
-            SizedBox(
-              width: 4,
-            ),
-            Text(
-              dateFormat.format(DateTime.now()),
-            ),
-          ],
-        ),
-        centerTitle: true,
-        leading: IconButton(
-          icon: Icon(Icons.map),
-          onPressed: () {
-            _goToPage(context, MapPage());
-          },
-        ),
-        actions: <Widget>[
-          IconButton(
-            icon: Icon(Icons.bookmark_border),
-            onPressed: () {
-              _goToPage(context, NotesPage());
-            },
-          ),
-        ],
-      ),
       body: ListView(
         children: <Widget>[
           SizedBox(
@@ -93,19 +62,7 @@ class HomePage extends StatelessWidget {
           ),
         ],
       ),
-      floatingActionButtonLocation: FloatingActionButtonLocation.endDocked,
-      floatingActionButton: FloatingActionButton(
-        tooltip: 'Aggiungi nota',
-        child: Icon(Icons.add),
-        onPressed: null,
-      ),
       bottomNavigationBar: MyBottomNavigationBar(),
-    );
-  }
-
-  _goToPage(BuildContext context, Widget widget) {
-    Navigator.of(context).push(
-      MaterialPageRoute(builder: (BuildContext context) => widget),
     );
   }
 }

@@ -1,4 +1,5 @@
 import 'package:diarybootcamp/ui/pages/home/home.dart';
+import 'package:diarybootcamp/ui/pages/root/root.dart';
 import 'package:flutter/material.dart';
 
 /// First Widget attached to the screen
@@ -11,7 +12,7 @@ class DiAryApp extends StatelessWidget {
         primaryColor: Colors.white,
         accentColor: Colors.blueGrey,
       ),
-      home: HomePage(),
+      home: RootPage(),
     );
   }
 }
