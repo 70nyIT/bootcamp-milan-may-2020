@@ -1,17 +1,16 @@
+import 'package:diarybootcamp/models/annotation.dart';
 import 'package:flutter/material.dart';
 
 class NoteItem extends StatelessWidget {
-  final int index;
-  final DateTime dateTime;
+  final Annotation annotation;
 
-  const NoteItem({Key key, @required this.index, @required this.dateTime})
-      : super(key: key);
+  const NoteItem({Key key, @required this.annotation}) : super(key: key);
   @override
   Widget build(BuildContext context) {
     return ListTile(
       leading: Icon(Icons.bookmark),
-      title: Text('Nota: $index'),
-      subtitle: Text(dateTime?.toIso8601String()),
+      title: Text(annotation.text),
+      subtitle: Text(annotation.dateTime.toIso8601String()),
     );
   }
 }

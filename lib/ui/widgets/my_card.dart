@@ -4,17 +4,22 @@ class MyCard extends StatelessWidget {
   final String title;
   final String description;
   final IconData iconData;
+  final Color color;
+  final Function onTap;
 
   const MyCard({
     Key key,
     @required this.title,
     @required this.description,
     @required this.iconData,
+    this.color,
+    this.onTap,
   }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     return Card(
+      color: color,
       margin: const EdgeInsets.symmetric(vertical: 8, horizontal: 16),
       elevation: 2,
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16.0)),
@@ -73,9 +78,7 @@ class MyCard extends StatelessWidget {
                   'ATTIVA',
                   style: TextStyle(color: Colors.white),
                 ),
-                onPressed: () {
-                  print('Attiva');
-                },
+                onPressed: onTap,
               ),
             ),
           ],

@@ -4,6 +4,9 @@ import 'package:diarybootcamp/ui/widgets/my_card.dart';
 import 'package:flutter/material.dart';
 
 class HomePage extends StatelessWidget {
+  final int annotationCount;
+
+  const HomePage({Key key, this.annotationCount}) : super(key: key);
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -41,7 +44,7 @@ class HomePage extends StatelessWidget {
                       Padding(
                         padding: const EdgeInsets.all(8.0),
                         child: Text(
-                          '0',
+                          annotationCount.toString(),
                           style: TextStyles.standard,
                         ),
                       ),
@@ -51,15 +54,50 @@ class HomePage extends StatelessWidget {
               ),
             ],
           ),
-          MyCard(
-            title: 'Attiva servizio',
-            description:
-                'Mantenere il tracciamento attivo per il buon funzionamento dell\'app',
-            iconData: Icons.gps_fixed,
-          ),
+          ServiceCard(),
         ],
       ),
       bottomNavigationBar: MyBottomNavigationBar(),
+    );
+  }
+}
+
+class ServiceCard extends StatefulWidget {
+  @override
+  _ServiceCardState createState() => _ServiceCardState();
+}
+
+class _ServiceCardState extends State<ServiceCard> {
+  Color color;
+  bool active;
+
+  @override
+  void initState() {
+    super.initState();
+    active = false;
+    color = Colors.white;
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return TweenAnimationBuilder(
+      duration: Duration(milliseconds: 300),
+      tween: ColorTween(begin: Colors.white, end: color),
+      builder: (BuildContext context, value, Widget child) {
+        return MyCard(
+          title: active ? 'Disattiva servizio' : 'Attiva servizio',
+          description:
+              'Mantenere il tracciamento attivo per il buon funzionamento dell\'app',
+          iconData: Icons.gps_fixed,
+          color: value,
+          onTap: () {
+            setState(() {
+              color = active ? Colors.white : Colors.orange;
+              active = !active;
+            });
+          },
+        );
+      },
     );
   }
 }
