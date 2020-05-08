@@ -16,6 +16,7 @@ class _RootPageState extends State<RootPage> {
   DateFormat dateFormat;
   int _index;
   List<Annotation> _annotations;
+  int _sampleCount = 0;
 
   @override
   void initState() {
@@ -59,6 +60,7 @@ class _RootPageState extends State<RootPage> {
           IconButton(
             icon: Icon(_index == 0 ? Icons.bookmark_border : Icons.search),
             onPressed: () {
+              if (_index != 0) return;
               _changePage(Page.Notes);
             },
           ),
@@ -69,8 +71,11 @@ class _RootPageState extends State<RootPage> {
         children: <Widget>[
           HomePage(
             annotationCount: _annotations.length,
+            sampleCount: _sampleCount,
           ),
-          MapPage(),
+          MapPage(
+            onNewLocationAdded: _updateSampleCounter,
+          ),
           NotesPage(
             annotations: _annotations,
           ),
@@ -95,37 +100,9 @@ class _RootPageState extends State<RootPage> {
     });
   }
 
-/*  @override
-  void didChangeDependencies() {
-    super.didChangeDependencies();
-    print('didChangeDependencies');
+  _updateSampleCounter() {
+    setState(() {
+      _sampleCount++;
+    });
   }
-
-  @override
-  void dispose() {
-    print('dispose');
-    super.dispose();
-  }
-
-  @override
-  void deactivate() {
-    super.deactivate();
-    print('deactivate');
-  }
-
-  @override
-  void setState(VoidCallback fn) {
-    print('setState');
-  }
-
-//  @override
-//  void reassemble() {
-//    super.reassemble();
-//    print('reassemble');
-//  }
-
-  @override
-  void didUpdateWidget(oldWidget) {
-    print('didUpdateWidget');
-  }*/
 }

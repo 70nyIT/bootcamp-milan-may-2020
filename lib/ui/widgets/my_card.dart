@@ -6,6 +6,7 @@ class MyCard extends StatelessWidget {
   final IconData iconData;
   final Color color;
   final Function onTap;
+  final List<Widget> bottomButtons;
 
   const MyCard({
     Key key,
@@ -14,6 +15,7 @@ class MyCard extends StatelessWidget {
     @required this.iconData,
     this.color,
     this.onTap,
+    this.bottomButtons,
   }) : super(key: key);
 
   @override
@@ -67,19 +69,8 @@ class MyCard extends StatelessWidget {
               ],
             ),
             SizedBox(height: 8),
-            Align(
-              alignment: Alignment.centerRight,
-              child: RaisedButton(
-                color: Theme.of(context).accentColor,
-                shape: RoundedRectangleBorder(
-                  borderRadius: new BorderRadius.circular(10.0),
-                ),
-                child: Text(
-                  'ATTIVA',
-                  style: TextStyle(color: Colors.white),
-                ),
-                onPressed: onTap,
-              ),
+            ButtonBar(
+              children: bottomButtons == null ? <Widget>[] : bottomButtons,
             ),
           ],
         ),
