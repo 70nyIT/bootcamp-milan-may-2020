@@ -1,3 +1,4 @@
+import 'package:diarybootcamp/ui/widgets/my_button.dart';
 import 'package:diarybootcamp/ui/widgets/my_card.dart';
 import 'package:flutter/material.dart';
 
@@ -30,15 +31,8 @@ class _ServiceCardState extends State<ServiceCard> {
           iconData: Icons.gps_fixed,
           color: value,
           bottomButtons: <Widget>[
-            RaisedButton(
-              color: Theme.of(context).accentColor,
-              shape: RoundedRectangleBorder(
-                borderRadius: new BorderRadius.circular(10.0),
-              ),
-              child: Text(
-                active ? 'Disattiva' : 'Attiva',
-                style: TextStyle(color: Colors.white),
-              ),
+            MyButton(
+              text: active ? 'Disattiva' : 'Attiva',
               onPressed: () {
                 setState(() {
                   color = active ? Colors.white : Colors.orange;

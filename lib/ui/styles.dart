@@ -11,4 +11,5 @@ class TextStyles {
 
 extension TextStyleHelpers on TextStyle {
   TextStyle get bold => copyWith(fontWeight: FontWeight.bold);
+  TextStyle get white => copyWith(color: Colors.white);
 }
