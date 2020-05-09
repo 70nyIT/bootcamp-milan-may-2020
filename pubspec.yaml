@@ -27,6 +27,7 @@ dependencies:
   intl: ^0.16.1
   google_maps_flutter: ^0.5.27+1
   location: ^3.0.2
+  rflutter_alert: ^1.0.3
 
 dev_dependencies:
   flutter_test:

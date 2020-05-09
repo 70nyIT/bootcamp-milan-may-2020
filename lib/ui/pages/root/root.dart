@@ -1,8 +1,9 @@
 import 'package:diarybootcamp/models/annotation.dart';
 import 'package:diarybootcamp/models/page_enum.dart';
+import 'package:diarybootcamp/ui/styles.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
-
+import 'package:rflutter_alert/rflutter_alert.dart';
 import '../home/home.dart';
 import '../map/map.dart';
 import '../notes/notes.dart';
@@ -27,9 +28,9 @@ class _RootPageState extends State<RootPage> {
     _annotations = [];
   }
 
-  _incrementAnnotation() {
+  _updateAnnotations(Annotation annotation) {
     setState(() {
-      _annotations.add(Annotation('Prova', DateTime.now()));
+      _annotations.add(annotation);
     });
   }
 
@@ -82,14 +83,55 @@ class _RootPageState extends State<RootPage> {
         ],
       ),
       floatingActionButton: Padding(
-        padding: const EdgeInsets.only(bottom: 60.0),
+        padding: const EdgeInsets.only(bottom: 0.0),
         child: FloatingActionButton(
           tooltip: 'Aggiungi nota',
           child: Icon(Icons.add),
-          onPressed: _incrementAnnotation,
+          onPressed: () => _addAnnotation(context),
         ),
       ),
     );
+  }
+
+  _addAnnotation(BuildContext context) async {
+    TextEditingController _controller = TextEditingController();
+    await Alert(
+      context: context,
+      title: 'Nuova annotazione',
+      content: TextField(
+        controller: _controller,
+        maxLines: 5,
+        decoration: InputDecoration.collapsed(
+          hintText: 'Scrivi qui',
+          filled: true,
+          fillColor: Colors.blueGrey.shade200,
+        ),
+      ),
+      buttons: [
+        DialogButton(
+          child: Text(
+            'Annulla',
+            style: TextStyles.standard.white,
+          ),
+          onPressed: () {
+            Navigator.of(context).pop();
+          },
+        ),
+        DialogButton(
+          child: Text(
+            'Salva',
+            style: TextStyles.standard.white,
+          ),
+          onPressed: () {
+            final note = _controller.text.trim();
+            if (note.isEmpty) return;
+            final annotation = Annotation(note, DateTime.now());
+            _updateAnnotations(annotation);
+            Navigator.of(context).pop();
+          },
+        ),
+      ],
+    ).show();
   }
 
   _changePage(Page page) {
