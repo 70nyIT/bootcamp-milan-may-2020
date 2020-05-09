@@ -1,7 +1,9 @@
-import 'package:diarybootcamp/models/annotation.dart';
+import 'package:diarybootcamp/blocs/annotation_bloc/bloc.dart';
+import 'package:diarybootcamp/blocs/page_bloc/page_bloc.dart';
 import 'package:diarybootcamp/models/page_enum.dart';
 import 'package:diarybootcamp/ui/styles.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intl/intl.dart';
 import 'package:rflutter_alert/rflutter_alert.dart';
 import '../home/home.dart';
@@ -15,8 +17,6 @@ class RootPage extends StatefulWidget {
 
 class _RootPageState extends State<RootPage> {
   DateFormat dateFormat;
-  int _index;
-  List<Annotation> _annotations;
   int _sampleCount = 0;
 
   @override
@@ -24,72 +24,67 @@ class _RootPageState extends State<RootPage> {
     print('initState');
     super.initState();
     dateFormat = DateFormat('dd MMM');
-    _index = 0;
-    _annotations = [];
-  }
-
-  _updateAnnotations(Annotation annotation) {
-    setState(() {
-      _annotations.add(annotation);
-    });
   }
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: Row(
-          mainAxisSize: MainAxisSize.min,
-          children: <Widget>[
-            Icon(Icons.event),
-            SizedBox(
-              width: 4,
+    return BlocBuilder<PageBloc, Page>(
+      builder: (BuildContext context, Page state) {
+        final _index = state.index;
+        return Scaffold(
+          appBar: AppBar(
+            title: Row(
+              mainAxisSize: MainAxisSize.min,
+              children: <Widget>[
+                Icon(Icons.event),
+                SizedBox(
+                  width: 4,
+                ),
+                Text(
+                  dateFormat.format(DateTime.now()),
+                ),
+              ],
             ),
-            Text(
-              dateFormat.format(DateTime.now()),
+            centerTitle: true,
+            leading: IconButton(
+              icon: Icon(_index == 0 ? Icons.map : Icons.arrow_back_ios),
+              onPressed: () {
+                BlocProvider.of<PageBloc>(context)
+                    .add(_index == 0 ? Page.Map : Page.Home);
+              },
             ),
-          ],
-        ),
-        centerTitle: true,
-        leading: IconButton(
-          icon: Icon(_index == 0 ? Icons.map : Icons.arrow_back_ios),
-          onPressed: () {
-            _changePage(_index == 0 ? Page.Map : Page.Home);
-          },
-        ),
-        actions: <Widget>[
-          IconButton(
-            icon: Icon(_index == 0 ? Icons.bookmark_border : Icons.search),
-            onPressed: () {
-              if (_index != 0) return;
-              _changePage(Page.Notes);
-            },
+            actions: <Widget>[
+              IconButton(
+                icon: Icon(_index == 0 ? Icons.bookmark_border : Icons.search),
+                onPressed: () {
+                  if (_index != 0) return;
+                  BlocProvider.of<PageBloc>(context).add(Page.Notes);
+                },
+              ),
+            ],
           ),
-        ],
-      ),
-      body: IndexedStack(
-        index: _index,
-        children: <Widget>[
-          HomePage(
-            annotationCount: _annotations.length,
-            sampleCount: _sampleCount,
+          body: IndexedStack(
+            index: state.index,
+            children: <Widget>[
+              HomePage(
+                sampleCount: _sampleCount,
+              ),
+              MapPage(
+                onNewLocationAdded: _updateSampleCounter,
+              ),
+              NotesPage(),
+            ],
           ),
-          MapPage(
-            onNewLocationAdded: _updateSampleCounter,
+          floatingActionButton: Padding(
+            padding: const EdgeInsets.only(bottom: 0.0),
+            child: FloatingActionButton(
+              tooltip: 'Aggiungi nota',
+              child: Icon(Icons.add),
+              onPressed: () => _addAnnotation(context),
+            ),
           ),
-          NotesPage(
-            annotations: _annotations,
-          ),
-        ],
-      ),
-      floatingActionButton: Padding(
-        padding: const EdgeInsets.only(bottom: 0.0),
-        child: FloatingActionButton(
-          tooltip: 'Aggiungi nota',
-          child: Icon(Icons.add),
-          onPressed: () => _addAnnotation(context),
-        ),
-      ),
+        );
+      },
     );
   }
 
@@ -125,21 +120,13 @@ class _RootPageState extends State<RootPage> {
           onPressed: () {
             final note = _controller.text.trim();
             if (note.isEmpty) return;
-            final annotation = Annotation(note, DateTime.now());
-            _updateAnnotations(annotation);
+            BlocProvider.of<AnnotationBloc>(context)
+                .add(AddAnnotation(note: note, dateTime: DateTime.now()));
             Navigator.of(context).pop();
           },
         ),
       ],
     ).show();
-  }
-
-  _changePage(Page page) {
-    print('_changePage');
-    if (_index == page.index) return;
-    setState(() {
-      _index = page.index;
-    });
   }
 
   _updateSampleCounter() {

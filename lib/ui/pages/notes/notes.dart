@@ -1,22 +1,28 @@
+import 'package:diarybootcamp/blocs/annotation_bloc/annotation_bloc.dart';
+import 'package:diarybootcamp/blocs/annotation_bloc/annotation_bloc_state.dart';
 import 'package:diarybootcamp/models/annotation.dart';
 import 'package:diarybootcamp/ui/widgets/note_item.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 
 class NotesPage extends StatelessWidget {
-  final List<Annotation> annotations;
-
-  const NotesPage({Key key, @required this.annotations}) : super(key: key);
-
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: ListView.builder(
-        scrollDirection: Axis.vertical,
-        itemCount: annotations.length,
-        itemBuilder: (BuildContext context, int index) => NoteItem(
-          annotation: annotations[index],
-        ),
-      ),
-    );
+    return Scaffold(body: BlocBuilder<AnnotationBloc, AnnotationBlocState>(
+      builder: (BuildContext context, state) {
+        List<Annotation> annotations = [];
+        if (state is AnnotationsLoaded) {
+          annotations = state.annotations;
+        }
+
+        return ListView.builder(
+          scrollDirection: Axis.vertical,
+          itemCount: annotations.length,
+          itemBuilder: (BuildContext context, int index) => NoteItem(
+            annotation: annotations[index],
+          ),
+        );
+      },
+    ));
   }
 }
