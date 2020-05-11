@@ -56,8 +56,9 @@ class _MapPageState extends State<MapPage> {
   _onGetNewLocationTap() async {
     final newLoc = await locationService.getLocation();
     if (newLoc != null) {
-      _addMarker(newLoc);
-      _goToLocation(newLoc);
+      final latLng = LatLng(newLoc.lat, newLoc.long);
+      _addMarker(latLng);
+      _goToLocation(latLng);
       widget.onNewLocationAdded();
     }
   }

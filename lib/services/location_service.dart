@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'package:diarybootcamp/models/my_location.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:location/location.dart';
 
@@ -10,11 +11,14 @@ class LocationService {
     location.requestPermission();
   }
 
-  Future<LatLng> getLocation() async {
+  Future<MyLocation> getLocation() async {
     try {
       if (await _checkPermissions()) {
         var userLocation = await location.getLocation();
-        return LatLng(userLocation.latitude, userLocation.longitude);
+        return MyLocation(
+            lat: userLocation.latitude,
+            long: userLocation.longitude,
+            dateTime: DateTime.now());
       }
       await _requestPermission();
       return null;

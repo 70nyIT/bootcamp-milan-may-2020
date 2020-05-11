@@ -1,3 +1,4 @@
+import 'package:diarybootcamp/ui/pages/home/widgets/my_sample_counter.dart';
 import 'package:diarybootcamp/ui/styles.dart';
 import 'package:diarybootcamp/ui/pages/home/widgets/my_bottom_nav_bar.dart';
 import 'package:flutter/material.dart';
@@ -23,19 +24,7 @@ class HomePage extends StatelessWidget {
             children: <Widget>[
               Flexible(
                 fit: FlexFit.tight,
-                child: Center(
-                    child: Column(
-                  children: <Widget>[
-                    Text('Campionamenti'),
-                    Padding(
-                      padding: const EdgeInsets.all(8.0),
-                      child: Text(
-                        sampleCount.toString(),
-                        style: TextStyles.standard,
-                      ),
-                    ),
-                  ],
-                )),
+                child: MySampleCounter(),
               ),
               Flexible(fit: FlexFit.tight, child: MyAnnotationsCounter()),
             ],
