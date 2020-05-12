@@ -1,7 +1,11 @@
 import 'dart:async';
 
+import 'package:diarybootcamp/blocs/location_bloc/bloc.dart';
+import 'package:diarybootcamp/blocs/service_bloc/service_bloc.dart';
+import 'package:diarybootcamp/models/my_location.dart';
 import 'package:diarybootcamp/services/location_service.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:location/location.dart';
 
@@ -18,7 +22,7 @@ class _MapPageState extends State<MapPage> {
   CameraPosition initialCameraPosition;
   LocationService locationService;
   Completer<GoogleMapController> _controller = Completer();
-  Map<MarkerId, Marker> markers = <MarkerId, Marker>{};
+  Set<Marker> markers = <Marker>{};
 
   @override
   void initState() {
@@ -33,18 +37,33 @@ class _MapPageState extends State<MapPage> {
       body: Stack(
         fit: StackFit.expand,
         children: <Widget>[
-          GoogleMap(
-            myLocationButtonEnabled: false,
-            initialCameraPosition: initialCameraPosition,
-            onMapCreated: _onMapCreated,
-            markers: Set<Marker>.of(markers.values),
+          BlocListener<LocationBlocBloc, LocationBlocState>(
+            listener: (BuildContext context, state) {
+              if (state is LocationsLoaded) {
+                final list = state.locations;
+                if (list.isNotEmpty) {
+                  setState(() {
+                    this.markers =
+                        Set<Marker>.from(list.map((l) => _buildMarker(l)));
+                  });
+                  _goToLocation(list.last);
+                }
+              }
+            },
+            child: GoogleMap(
+              myLocationButtonEnabled: false,
+              initialCameraPosition: initialCameraPosition,
+              onMapCreated: _onMapCreated,
+              markers: markers,
+            ),
           ),
           Align(
             alignment: Alignment.topRight,
             child: Card(
               child: IconButton(
                 icon: Icon(Icons.gps_fixed),
-                onPressed: _onGetNewLocationTap,
+                onPressed: () =>
+                    BlocProvider.of<ServiceBloc>(context).getNewLocation(),
               ),
             ),
           )
@@ -53,36 +72,24 @@ class _MapPageState extends State<MapPage> {
     );
   }
 
-  _onGetNewLocationTap() async {
-    final newLoc = await locationService.getLocation();
-    if (newLoc != null) {
-      final latLng = LatLng(newLoc.lat, newLoc.long);
-      _addMarker(latLng);
-      _goToLocation(latLng);
-      widget.onNewLocationAdded();
-    }
-  }
-
-  _addMarker(LatLng location) {
+  _buildMarker(MyLocation location) {
     final markerId = MarkerId('markerId_${markers.length}');
     final marker = Marker(
       markerId: markerId,
-      position: location,
+      position: LatLng(location.lat, location.long),
     );
-    setState(() {
-      markers[markerId] = marker;
-    });
+    return marker;
   }
 
   void _onMapCreated(GoogleMapController controller) {
     _controller.complete(controller);
   }
 
-  Future<void> _goToLocation(LatLng location) async {
+  Future<void> _goToLocation(MyLocation location) async {
     final GoogleMapController controller = await _controller.future;
     await controller.animateCamera(
       CameraUpdate.newCameraPosition(
-        CameraPosition(target: location, zoom: 15),
+        CameraPosition(target: LatLng(location.lat, location.long), zoom: 15),
       ),
     );
   }

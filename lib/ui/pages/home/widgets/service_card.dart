@@ -1,6 +1,8 @@
+import 'package:diarybootcamp/blocs/service_bloc/service_bloc.dart';
 import 'package:diarybootcamp/ui/widgets/my_button.dart';
 import 'package:diarybootcamp/ui/widgets/my_card.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 
 class ServiceCard extends StatefulWidget {
   @override
@@ -34,6 +36,12 @@ class _ServiceCardState extends State<ServiceCard> {
             MyButton(
               text: active ? 'Disattiva' : 'Attiva',
               onPressed: () {
+                if (active) {
+                  BlocProvider.of<ServiceBloc>(context).stopService();
+                } else {
+                  BlocProvider.of<ServiceBloc>(context).startService();
+                }
+
                 setState(() {
                   color = active ? Colors.white : Colors.orange;
                   active = !active;

@@ -17,7 +17,7 @@ class MySampleCounter extends StatelessWidget {
               builder: (BuildContext context, state) {
                 String text;
                 if (state is LocationsLoaded) {
-                  text = state.locations.toString();
+                  text = state.locations.length.toString();
                 }
                 return Text(
                   text ?? '-',

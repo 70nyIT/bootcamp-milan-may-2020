@@ -31,6 +31,7 @@ dependencies:
   equatable:
   flutter_bloc:
   bloc:
+  uuid:
 
 dev_dependencies:
   flutter_test:

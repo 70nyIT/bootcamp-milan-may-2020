@@ -29,18 +29,27 @@ class ServiceBloc extends Bloc<ServiceStatus, ServiceStatus> {
   }
 
   startService() {
-    if (_timer.isActive) {
+    print('startService');
+    if (_timer != null && _timer.isActive) {
       _timer.cancel();
     }
-    _timer = Timer(Duration(seconds: 2), getNewLocation);
+    _timer = Timer.periodic(Duration(seconds: 30), (t) => getNewLocation());
   }
 
   stopService() {
+    print('stopService');
     _timer?.cancel();
   }
 
   Future<void> getNewLocation() async {
+    print('getNewLocation');
     final newLocation = await _locationService.getLocation();
     _locationBlocBloc.add(AddNewLocation(location: newLocation));
+  }
+
+  @override
+  Future<void> close() {
+    stopService();
+    return super.close();
   }
 }
