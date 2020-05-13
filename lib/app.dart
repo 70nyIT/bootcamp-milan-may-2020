@@ -1,6 +1,10 @@
+import 'package:diarybootcamp/blocs/login_bloc/bloc.dart';
+import 'package:diarybootcamp/repositories/annotation_repository.dart';
 import 'package:diarybootcamp/blocs/location_bloc/bloc.dart';
 import 'package:diarybootcamp/blocs/service_bloc/service_bloc.dart';
+import 'package:diarybootcamp/repositories/login_repository.dart';
 import 'package:diarybootcamp/services/location_service.dart';
+import 'package:diarybootcamp/ui/pages/login/login_page.dart';
 import 'package:diarybootcamp/ui/pages/root/root.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -26,22 +30,25 @@ class _DiAryAppState extends State<DiAryApp> {
   Widget build(BuildContext context) {
     return MultiBlocProvider(
       providers: [
-        BlocProvider(
+        BlocProvider<LoginBloc>(
+            create: (_) =>
+                LoginBloc(LoginRepositoryImpl())..add(CheckCurrentUser())),
+        BlocProvider<ServiceBloc>(
             create: (_) => ServiceBloc(LocationService(), _locationBlocBloc)),
-        BlocProvider(create: (_) => PageBloc()),
-        BlocProvider(create: (_) => AnnotationBloc()..add(LoadAnnotations())),
+        BlocProvider<PageBloc>(create: (_) => PageBloc()),
+        BlocProvider<AnnotationBloc>(
+            create: (_) => AnnotationBloc(AnnotationRepositoryImpl())),
         BlocProvider.value(
           value: _locationBlocBloc,
         ),
       ],
       child: MaterialApp(
-        title: 'DiAry Bootcamp',
-        theme: ThemeData(
-          primaryColor: Colors.white,
-          accentColor: Colors.blueGrey,
-        ),
-        home: RootPage(),
-      ),
+          title: 'DiAry Bootcamp',
+          theme: ThemeData(
+            primaryColor: Colors.white,
+            accentColor: Colors.blueGrey,
+          ),
+          home: AuthPage()),
     );
   }
 
@@ -49,5 +56,27 @@ class _DiAryAppState extends State<DiAryApp> {
   void dispose() {
     _locationBlocBloc.close();
     super.dispose();
+  }
+}
+
+class AuthPage extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return BlocConsumer<LoginBloc, LoginState>(
+      listener: (BuildContext context, state) {
+        if (state is Authenticated) {
+          BlocProvider.of<AnnotationBloc>(context)
+              .add(StartAnnotationService());
+        }
+      },
+      builder: (BuildContext context, state) {
+        if (state is Authenticated) {
+          return RootPage();
+        } else if (state is Unauthenticated) {
+          return LoginPage();
+        }
+        return Icon(Icons.error);
+      },
+    );
   }
 }

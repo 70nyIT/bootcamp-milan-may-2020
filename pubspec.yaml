@@ -32,6 +32,8 @@ dependencies:
   flutter_bloc:
   bloc:
   uuid:
+  cloud_firestore: ^0.13.5
+  firebase_auth: ^0.16.0
 
 dev_dependencies:
   flutter_test:

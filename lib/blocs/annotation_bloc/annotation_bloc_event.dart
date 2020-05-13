@@ -6,16 +6,37 @@ abstract class AnnotationBlocEvent extends Equatable {
 }
 
 class AddAnnotation extends AnnotationBlocEvent {
-  final String note;
-  final DateTime dateTime;
+  final Annotation annotation;
 
-  AddAnnotation({this.note, this.dateTime});
+  AddAnnotation(this.annotation);
 
   @override
-  List<Object> get props => [note, dateTime];
+  List<Object> get props => [annotation];
 }
 
 class LoadAnnotations extends AnnotationBlocEvent {
   @override
   List<Object> get props => [];
+}
+
+class RemoveAnnotation extends AnnotationBlocEvent {
+  final Annotation annotation;
+
+  RemoveAnnotation(this.annotation);
+  @override
+  List<Object> get props => [annotation];
+}
+
+class StartAnnotationService extends AnnotationBlocEvent {
+  StartAnnotationService();
+  @override
+  List<Object> get props => [];
+}
+
+class UpdateAnnotations extends AnnotationBlocEvent {
+  final List<Annotation> annotations;
+
+  UpdateAnnotations(this.annotations);
+  @override
+  List<Object> get props => [annotations];
 }

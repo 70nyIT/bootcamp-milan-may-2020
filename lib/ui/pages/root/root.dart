@@ -1,11 +1,13 @@
 import 'package:diarybootcamp/blocs/annotation_bloc/bloc.dart';
 import 'package:diarybootcamp/blocs/page_bloc/page_bloc.dart';
+import 'package:diarybootcamp/models/annotation.dart';
 import 'package:diarybootcamp/models/page_enum.dart';
 import 'package:diarybootcamp/ui/styles.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intl/intl.dart';
 import 'package:rflutter_alert/rflutter_alert.dart';
+import 'package:uuid/uuid.dart';
 import '../home/home.dart';
 import '../map/map.dart';
 import '../notes/notes.dart';
@@ -120,8 +122,10 @@ class _RootPageState extends State<RootPage> {
           onPressed: () {
             final note = _controller.text.trim();
             if (note.isEmpty) return;
-            BlocProvider.of<AnnotationBloc>(context)
-                .add(AddAnnotation(note: note, dateTime: DateTime.now()));
+            final annotation = Annotation(Uuid().v1(), note, DateTime.now());
+            BlocProvider.of<AnnotationBloc>(context).add(
+              AddAnnotation(annotation),
+            );
             Navigator.of(context).pop();
           },
         ),
