@@ -32,3 +32,4 @@ Runner/GeneratedPluginRegistrant.*
 !default.
 
 keys.swift
+GoogleService-Info.plist
