@@ -1,3 +1,4 @@
+import 'package:diarybootcamp/blocs/connection_bloc/connection_bloc.dart';
 import 'package:diarybootcamp/blocs/login_bloc/bloc.dart';
 import 'package:diarybootcamp/repositories/annotation_repository.dart';
 import 'package:diarybootcamp/blocs/location_bloc/bloc.dart';
@@ -8,9 +9,11 @@ import 'package:diarybootcamp/ui/pages/login/login_page.dart';
 import 'package:diarybootcamp/ui/pages/root/root.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:hive/hive.dart';
 
 import 'blocs/annotation_bloc/bloc.dart';
 import 'blocs/page_bloc/page_bloc.dart';
+import 'models/annotation.dart';
 
 /// First Widget attached to the screen
 class DiAryApp extends StatefulWidget {
@@ -30,14 +33,19 @@ class _DiAryAppState extends State<DiAryApp> {
   Widget build(BuildContext context) {
     return MultiBlocProvider(
       providers: [
+        BlocProvider<ConnectionBloc>(create: (_) => ConnectionBloc()),
         BlocProvider<LoginBloc>(
-            create: (_) =>
-                LoginBloc(LoginRepositoryImpl())..add(CheckCurrentUser())),
+          create: (_) =>
+              LoginBloc(LoginRepositoryImpl())..add(CheckCurrentUser()),
+        ),
         BlocProvider<ServiceBloc>(
             create: (_) => ServiceBloc(LocationService(), _locationBlocBloc)),
         BlocProvider<PageBloc>(create: (_) => PageBloc()),
         BlocProvider<AnnotationBloc>(
-            create: (_) => AnnotationBloc(AnnotationRepositoryImpl())),
+          create: (_) => AnnotationBloc(
+            AnnotationRepositoryImpl(Hive.box<Annotation>('annotations')),
+          ),
+        ),
         BlocProvider.value(
           value: _locationBlocBloc,
         ),

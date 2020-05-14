@@ -1,8 +1,10 @@
 import 'package:diarybootcamp/blocs/annotation_bloc/bloc.dart';
+import 'package:diarybootcamp/blocs/connection_bloc/connection_bloc.dart';
 import 'package:diarybootcamp/blocs/page_bloc/page_bloc.dart';
 import 'package:diarybootcamp/models/annotation.dart';
 import 'package:diarybootcamp/models/page_enum.dart';
 import 'package:diarybootcamp/ui/styles.dart';
+import 'package:diarybootcamp/ui/widgets/connection_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intl/intl.dart';
@@ -19,7 +21,6 @@ class RootPage extends StatefulWidget {
 
 class _RootPageState extends State<RootPage> {
   DateFormat dateFormat;
-  int _sampleCount = 0;
 
   @override
   void initState() {
@@ -68,12 +69,8 @@ class _RootPageState extends State<RootPage> {
           body: IndexedStack(
             index: state.index,
             children: <Widget>[
-              HomePage(
-                sampleCount: _sampleCount,
-              ),
-              MapPage(
-                onNewLocationAdded: _updateSampleCounter,
-              ),
+              HomePage(),
+              MapPage(),
               NotesPage(),
             ],
           ),
@@ -91,51 +88,66 @@ class _RootPageState extends State<RootPage> {
   }
 
   _addAnnotation(BuildContext context) async {
-    TextEditingController _controller = TextEditingController();
-    await Alert(
-      context: context,
-      title: 'Nuova annotazione',
-      content: TextField(
-        controller: _controller,
-        maxLines: 5,
-        decoration: InputDecoration.collapsed(
-          hintText: 'Scrivi qui',
-          filled: true,
-          fillColor: Colors.blueGrey.shade200,
-        ),
-      ),
-      buttons: [
-        DialogButton(
-          child: Text(
-            'Annulla',
-            style: TextStyles.standard.white,
+    final connectionStatus = BlocProvider.of<ConnectionBloc>(context).state;
+    if (connectionStatus == ConnectionStatus.Disconnected) {
+      await Alert(
+        context: context,
+        title: 'Connessione assente',
+        desc:
+            'Al momento non è disponibile una connessione dati per aggiungere una nota',
+        buttons: [
+          DialogButton(
+            child: Text(
+              'Ok',
+              style: TextStyles.standard.white,
+            ),
+            onPressed: () {
+              Navigator.of(context).pop();
+            },
           ),
-          onPressed: () {
-            Navigator.of(context).pop();
-          },
-        ),
-        DialogButton(
-          child: Text(
-            'Salva',
-            style: TextStyles.standard.white,
+        ],
+      ).show();
+    } else {
+      TextEditingController _controller = TextEditingController();
+      await Alert(
+        context: context,
+        title: 'Nuova annotazione',
+        content: TextField(
+          controller: _controller,
+          maxLines: 5,
+          decoration: InputDecoration.collapsed(
+            hintText: 'Scrivi qui',
+            filled: true,
+            fillColor: Colors.blueGrey.shade200,
           ),
-          onPressed: () {
-            final note = _controller.text.trim();
-            if (note.isEmpty) return;
-            final annotation = Annotation(Uuid().v1(), note, DateTime.now());
-            BlocProvider.of<AnnotationBloc>(context).add(
-              AddAnnotation(annotation),
-            );
-            Navigator.of(context).pop();
-          },
         ),
-      ],
-    ).show();
-  }
-
-  _updateSampleCounter() {
-    setState(() {
-      _sampleCount++;
-    });
+        buttons: [
+          DialogButton(
+            child: Text(
+              'Annulla',
+              style: TextStyles.standard.white,
+            ),
+            onPressed: () {
+              Navigator.of(context).pop();
+            },
+          ),
+          DialogButton(
+            child: Text(
+              'Salva',
+              style: TextStyles.standard.white,
+            ),
+            onPressed: () {
+              final note = _controller.text.trim();
+              if (note.isEmpty) return;
+              final annotation = Annotation(Uuid().v1(), note, DateTime.now());
+              BlocProvider.of<AnnotationBloc>(context).add(
+                AddAnnotation(annotation),
+              );
+              Navigator.of(context).pop();
+            },
+          ),
+        ],
+      ).show();
+    }
   }
 }

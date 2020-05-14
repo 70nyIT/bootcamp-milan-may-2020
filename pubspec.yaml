@@ -34,11 +34,15 @@ dependencies:
   uuid:
   cloud_firestore: ^0.13.5
   firebase_auth: ^0.16.0
+  hive: ^1.4.1+1
+  hive_flutter: ^0.3.0+2
+  data_connection_checker: ^0.3.4
 
 dev_dependencies:
   flutter_test:
     sdk: flutter
-
+  hive_generator: ^0.7.0+2
+  build_runner: ^1.10.0
 
 # For information on the generic Dart part of this file, see the
 # following page: https://dart.dev/tools/pub/pubspec

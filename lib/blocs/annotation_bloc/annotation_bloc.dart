@@ -51,9 +51,15 @@ class AnnotationBloc extends Bloc<AnnotationBlocEvent, AnnotationBlocState> {
         add(UpdateAnnotations(annotations));
       });
     } else if (event is UpdateAnnotations) {
-      yield AnnotationsLoaded(annotations: event.annotations);
+      if (cachedAnnotations == null) {
+        cachedAnnotations = annotationRepository.getAllLocalNotes();
+      }
+      yield AnnotationsLoaded(
+          annotations: [...cachedAnnotations, ...event.annotations]);
     }
   }
+
+  List<Annotation> cachedAnnotations;
 
   Future<List<Annotation>> _getAnnotations() async {
     return await annotationRepository.getAllNotes();
